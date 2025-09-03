@@ -4,8 +4,12 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-v', '--verbose', action='store_true')
 parser.add_argument('prompt', help="The prompt text")
+try:
+    args = parser.parse_args()
+except SystemExit:
+    print("Invalid flag or missing prompt\n|> uv run main.py 'Prompt here' [flags]")
+    sys.exit(1)
 
-args = parser.parse_args()
 
 if len(sys.argv) > 1:
     prompt = args.prompt

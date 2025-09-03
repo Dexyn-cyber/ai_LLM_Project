@@ -7,21 +7,20 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-v', '--verbose', action='store_true')
-parser.add_argument('prompt', help="The Prompt")
-args = parser.parse_args()
-
-if len(sys.argv) > 1:
-    user_prompt = str(args.prompt)
-else:
-    print("You are required to give a prompt. |> uv run main.py 'Prompt here' ")
-    exit(1)
-
+parser.add_argument('user_prompt', help="The prompt text")
+try:
+    args = parser.parse_args()
+except SystemExit:
+    print("Invalid flag or missing prompt\n|> uv run main.py 'Prompt here' [flags]")
+    sys.exit(1)
+    
+user_prompt = args.user_prompt
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
 
 messages = [
-    types.Content(role="user", parts=[types.Part(test=user_prompt)])
+    types.Content(role="user", parts=[types.Part(text=user_prompt)])
 ]
 
 client = genai.Client(api_key=api_key)
@@ -33,6 +32,6 @@ response = client.models.generate_content(
 print(response.text)
 
 if args.verbose:
-    print(f"Users prompt: {user_prompt}")
+    print(f'User prompt: {user_prompt}')
     print(f'Prompt tokens: {response.usage_metadata.prompt_token_count}')
     print(f'Response tokens: {response.usage_metadata.candidates_token_count}')
