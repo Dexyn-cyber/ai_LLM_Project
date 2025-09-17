@@ -1,6 +1,8 @@
 import os
 from google.genai import types
-
+from functions.get_file_content import schema_get_file_content
+from functions.run_python_file import schema_run_python_file
+from functions.write_file import schema_write_file
 
 schema_get_files_info = types.FunctionDeclaration(
     name="get_files_info",
@@ -15,17 +17,20 @@ schema_get_files_info = types.FunctionDeclaration(
         },
     ),
 )
+
 available_functions = types.Tool(
     function_declarations=[
         schema_get_files_info,
+        schema_get_file_content,
+        schema_run_python_file,
+        schema_write_file,
     ]
 )
 
 def get_files_info(working_directory, directory="."):
 
     try:
-        full_path = os.path.join(working_directory, directory)
-        full_path = os.path.abspath(full_path)
+        full_path = os.path.abspath(os.path.join(working_directory, directory))
         working_abs = os.path.abspath(working_directory)
         if not full_path.startswith(working_abs):
             return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
